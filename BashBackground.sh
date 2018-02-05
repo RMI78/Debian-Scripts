@@ -1,6 +1,6 @@
 #!/bin/bash
 
-WP_DIR=/home/kurt/Pictures/Wallpapers
+WP_DIR=~/Pictures/Wallpapers
 
 cd $WP_DIR
 while [ 1 ] 
