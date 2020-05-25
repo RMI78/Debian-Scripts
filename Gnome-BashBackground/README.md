@@ -1,5 +1,5 @@
 # BashBackground
-A simple shell script who change your background on Gnome 
+A simple shell script which change your background on Gnome 
 
 ## How to Use 
 
@@ -24,6 +24,12 @@ A simple shell script who change your background on Gnome
 > and in the crontab file, add the lines:
 
 `@reboot /path/to/BashBackground.sh`
+
+A persistent installation will be commited
+
+## Requirements
+
+your system need to have a Gnome interface and the script will optionaly use the `cron` program to make background changing peristent 
 
 
 
