@@ -29,7 +29,7 @@ A persistent installation will be commited
 
 ## Requirements
 
-your system need to have a Gnome interface and the script will optionaly use the `cron` program to make background changing peristent 
+your system need to have a Gnome interface and the script will optionaly use the `cron` program to make background changing persistent 
 
 
 
