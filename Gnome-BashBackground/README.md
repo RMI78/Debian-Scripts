@@ -11,7 +11,7 @@ Just launch the install.sh script and let it guide you through the very short in
 
 ### Remove
 
-A removing script is useless, to get back to a constant background open your crontab with `crontab -e` then remove the line that start with * \*/(the minute you set) \* \* \* \* PID=$(... *
+A removing script is useless, to get back to a constant background open your crontab with `crontab -e` then remove the line that start with _\*/(the minute you set) \* \* \* \* PID=$(..._
 
 ## Requirements
 
@@ -23,7 +23,7 @@ You can't run the install.sh script:
 just use `chmod +x install.sh`
 
 The background doesn't change after the installation:
-This bug happens sometimes due to a wrong PID, this bug may be patched later, in the meantime you can still correct this by going to your crontab with `crontab -e` then go to the line that start with * \*/(the minute you set) \* \* \* \* PID=$(... * and change the word `tail` to `head`
+This bug happens sometimes due to a wrong PID, this bug may be patched later, in the meantime you can still correct this by going to your crontab with `crontab -e` then going to the line that start with _\*/(the minute you set) \* \* \* \* PID=$(..._ and changing the word `tail` to `head`
 
 You want to change the frequency:
-DO NOT run the install script again before following the removing section
+go to your crontab with `crontab -e` then go to the line that start with _\*/(the minute you set) \* \* \* \* PID=$(..._ and change the number representing the frequency minute
