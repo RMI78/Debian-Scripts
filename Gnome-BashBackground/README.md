@@ -1,35 +1,29 @@
 # BashBackground
-A simple shell script which change your background on Gnome 
+A simple shell script which change your background on Gnome
 
-## How to Use 
+## What's New ?
+BashBackground have been renamed to Gnome-BashBackground (because it... basically run with Gnome only, that seems obvious) and don't need to have a running script anymore, since it runs on top of Cron you can now just start the install.sh script to make your background wallpaper changing peristent, no dependencies are required
 
-1.Create a new folder named Wallpapersin the Pictures folder of your home:
-`mkdir ~/Pictures/Wallpapers/`
+## How to Use
 
+### Install
+Just launch the install.sh script and let it guide you through the very short installation, after that you can even remove the git from your computer as changes are persistent, it will not affect the process
 
-2.Place all your wallpapers in the folder
+### Remove
 
-3.Start the script from a shell:
-
-`./BashBackground.sh`
-
-> You can also start it in background by using '&' char at every boots or cron tabs in order to set it as a daemon:
-
-`./BashBackground.sh &`
-
-> or 
-
-`crontab -e`
-
-> and in the crontab file, add the lines:
-
-`@reboot /path/to/BashBackground.sh`
-
-A persistent installation will be commited
+A removing script is useless, to get back to a constant background open your crontab with `crontab -e` then remove the line that start with * \*/(the minute you set) \* \* \* \* PID=$(... *
 
 ## Requirements
 
-your system need to have a Gnome interface and the script will optionaly use the `cron` program to make background changing persistent 
+Your system need to have a Gnome interface and the script will use the `cron` program 
 
+## Troubleshooting
 
+You can't run the install.sh script:
+just use `chmod +x install.sh`
 
+The background doesn't change after the installation:
+This bug happens sometimes due to a wrong PID, this bug may be patched later, in the meantime you can still correct this by going to your crontab with `crontab -e` then go to the line that start with * \*/(the minute you set) \* \* \* \* PID=$(... * and change the word `tail` to `head`
+
+You want to change the frequency:
+DO NOT run the install script again before following the removing section
