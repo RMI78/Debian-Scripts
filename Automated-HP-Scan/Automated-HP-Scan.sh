@@ -42,7 +42,7 @@ if [ $output_format = "pdf" ];then
     ps2pdf files ${files: $(expr ${#files} - 3)}.pdf
   done
   if [ $unite_pdf = 'y' ];then
-    pdfunite HP*.pdf $united_pdf_file
+    pdfunite hp*.pdf $united_pdf_file
   fi
 fi
 cd $current_dir
