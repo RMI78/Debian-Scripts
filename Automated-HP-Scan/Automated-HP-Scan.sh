@@ -31,7 +31,7 @@ for i in `seq 1 $scan_number`; do
     sleep 1
     printf \\r
   done
-    hp-scan -mode=color
+    scanimage --mode Color -p > $unified_pdf_file
 done
 if [ $output_format = 'pdf' ];then
   tmp_pdf_file=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 13 ; echo '').pdf
