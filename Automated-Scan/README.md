@@ -1,6 +1,6 @@
-# Automated HP Scan
+# Automated Scan
 
-If you have an HP printer/scanner, this script could save you some repetitive scanning and conversion tasks
+If you have a printer/scanner, this script could save you some repetitive scanning and conversion tasks
 
 ## How to use
 
