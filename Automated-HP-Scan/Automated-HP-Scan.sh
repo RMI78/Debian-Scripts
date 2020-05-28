@@ -21,7 +21,7 @@ read -p 'What output files do you want ? (pdf for PDF files, png for png files):
 if [ $output_format = 'pdf' ];then
   read -p 'Do you want unite all your scan into 1 pdf ? (y for yes, n for no): ' unite_pdf
   if [ $unite_pdf = 'y' ];then
-    read 'Name this final PDF file (do not forget to add ".pdf" at the end of the name): ' united_pdf_file
+    read -p 'Name this final PDF file (do not forget to add ".pdf" at the end of the name): ' united_pdf_file
   fi
 fi
 
