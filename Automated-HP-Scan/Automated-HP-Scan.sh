@@ -27,7 +27,7 @@ fi
 printf 'get ready, the scan process will start... \n'
 for i in `seq 1 $scan_number`; do
   for j in `seq 0 $delay`;do
-    printf '$(expr $delay - $j) seconds left before the next scan'
+    printf $(expr $delay - $j)' seconds left before the next scan'
     sleep 1
     printf \\r
   done
@@ -41,4 +41,4 @@ if [ $output_format = 'pdf' ];then
   rm $tmp_pdf_file hp*.png
 fi
 cd $current_dir
-printf 'job done !'
+printf 'job done !\n'
