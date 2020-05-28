@@ -17,10 +17,13 @@ if [ ! -d $path_file ]; then
   fi
 fi
 cd $create_dir
-read -p 'What output files do you want ? (pdf for an unified PDF file, anything else for the default png format): ' output_format
-if [ $output_format = 'pdf' ];then
+read -p 'What output files do you want ? (pdf for an PDF file, pdfu for an united pdf file , anything else for the default png format): ' output_format
+if [ $output_format = 'pdfu' ];then
   read -p 'Name this final PDF file (do not forget to add ".pdf" at the end of the name): ' unified_pdf_file
 fi
+
+
+
 
 
 #######MAIN PART#########
@@ -29,11 +32,14 @@ for i in `seq 1 $scan_number`; do
   for j in `seq 0 $delay`;do
     printf $(expr $delay - $j)' seconds left before the next scan'
     sleep 1
-    printf \\r
+    printf '\r'
   done
-    scanimage --mode Color -p > $unified_pdf_file
+    printf '\n'
+    scanimage --mode Color --format png -p >hp$i.png
+    printf '\r\r'
 done
-if [ $output_format = 'pdf' ];then
+printf '\n'
+if [ $output_format = 'pdfu' ];then
   tmp_pdf_file=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 13 ; echo '').pdf
   convert hp*.png $tmp_pdf_file
   printf "compressing pdf..."
