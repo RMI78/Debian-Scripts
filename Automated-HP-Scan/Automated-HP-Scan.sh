@@ -1,7 +1,7 @@
 #!/bin/bash
 
 printf 'welcome in this script that automate your scans on a HP printer, please make sure to read the README.md before and install all the required dependencies to avoid any errors \n'
-current_dir = $(pwd)
+current_dir=$(pwd)
 ######GUIDED INPUT MODE#######
 read -p 'How many scans will you do: ' scan_number
 read -p 'Set the delay (in seconds) needed to switch between scans: ' delay
@@ -17,12 +17,9 @@ if [ ! -d $path_file ]; then
   fi
 fi
 cd $create_dir
-read -p 'What output files do you want ? (pdf for PDF files, png for png files): ' output_format
+read -p 'What output files do you want ? (pdf for an unified PDF file, anything else for the default png format): ' output_format
 if [ $output_format = 'pdf' ];then
-  read -p 'Do you want unite all your scan into 1 pdf ? (y for yes, n for no): ' unite_pdf
-  if [ $unite_pdf = 'y' ];then
-    read -p 'Name this final PDF file (do not forget to add ".pdf" at the end of the name): ' united_pdf_file
-  fi
+  read -p 'Name this final PDF file (do not forget to add ".pdf" at the end of the name): ' unified_pdf_file
 fi
 
 
@@ -34,16 +31,14 @@ for i in `seq 1 $scan_number`; do
     sleep 1
     printf \\r
   done
-  hp-scan
+    hp-scan
 done
 if [ $output_format = 'pdf' ];then
-  png_to_pdf = (*)
-  for files in png_to_pdf; do
-    ps2pdf files ${files: $(expr ${#files} - 3)}.pdf
-  done
-  if [ $unite_pdf = 'y' ];then
-    pdfunite hp*.pdf $united_pdf_file
-  fi
+  tmp_pdf_file=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 13 ; echo '').pdf
+  convert hp*.png $tmp_pdf_file
+  printf "compressing pdf..."
+  ps2pdf $tmp_pdf_file $unified_pdf_file
+  rm $tmp_pdf_file hp*.png
 fi
 cd $current_dir
 printf 'job done !'
