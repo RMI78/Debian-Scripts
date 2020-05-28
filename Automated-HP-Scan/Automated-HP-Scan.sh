@@ -2,12 +2,17 @@
 
 printf 'welcome in this script that automate your scans on a HP printer, please make sure to read the README.md before and install all the required dependencies to avoid any errors \n'
 current_dir=$(pwd)
+#for errors handling
+set -e
+
+
 ######GUIDED INPUT MODE#######
 read -p 'How many scans will you do: ' scan_number
 read -p 'Set the delay (in seconds) needed to switch between scans: ' delay
-read -p 'Set the absolute path folder (without aliases) where you want to save your files: ' path_file
+read -e -p 'Set the absolute path folder (without aliases) where you want to save your files: ' path_file
+echo $path_file
 if [ ! -d $path_file ]; then
-  read 'this directory does not exist, do you want to create it ? (y for yes, n for no): ' create_dir
+  read -p 'this directory does not exist, do you want to create it ? (y for yes, n for no): ' create_dir
   if [ $create_dir = 'y' ];then
     mkdir $path_file
     printf 'File created at $create_dir \n'
@@ -17,14 +22,26 @@ if [ ! -d $path_file ]; then
   fi
 fi
 cd $create_dir
-read -p 'What output files do you want ? (pdf for an PDF file, pdfu for an united pdf file , anything else for the default png format): ' output_format
+read -n 4 -p 'What output files do you want ? (pdf for PDF file(s), pdfu for an united pdf file , anything else for the default png format): ' output_format
+printf '\n'
 if [ $output_format = 'pdfu' ];then
   read -p 'Name this final PDF file (do not forget to add ".pdf" at the end of the name): ' unified_pdf_file
 fi
 
 
-
-
+######CHECKING PART######
+if [ $scan_number = '0' ];then
+  printf 'no scan needed, quit'
+  exit
+fi
+if [ $output_format != 'pdf' ] && [ $output_format != 'pdfu' ];then
+  printf 'unknow format, switching to default png format\n'
+  output_format='png'
+fi
+if [ $scan_number = '1' ] && [ $output_format = 'pdfu' ];then
+  printf 'only 1 scan programmed, no pdfu format needed, switching to pdf format\n'
+  output_format='pdf'
+fi
 
 #######MAIN PART#########
 printf 'get ready, the scan process will start... \n'
