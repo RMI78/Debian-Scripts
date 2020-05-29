@@ -13,7 +13,7 @@ The dependency pdfunite is no longer required, see 'Requirements' for further in
 In order to run this script you will need to have :
 * The following dependencies: ps2pdf, ImageMagick, SANE, and hplip
 * A Cups daemon running
-* An HP printer already paired with your computer (to set up an HP printer, install the hplip package and see the hp-setup command)
+* A printer/scanner already paired with your computer (to set up an HP printer, install the hplip package and see the hp-setup command)
 
 ## To-Do List
 * Install a parameter mode so the advanced users can avoid the guided mode by inserting parameters
