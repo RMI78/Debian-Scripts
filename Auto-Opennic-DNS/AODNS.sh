@@ -37,9 +37,11 @@ function extract_tag_content(){
     let last_index+=1
   done
   let first_index+=1
-  echo ${1:$first_index:$last_index-$first_index}
+  echo "${1:$first_index:$last_index-$first_index}"
   return 0
 }
+
+
 
 #crawling the website and applying a first filter then store it into a txt file for a better work
 curl -s https://servers.opennic.org | grep "No logs kept" | grep "Pass"   > crawled_content.txt
@@ -50,22 +52,25 @@ while IFS='' read -r line || [[ -n "$line" ]];do
   raw_server_list+=("$filtered_line")
 done < crawled_content.txt
 rm crawled_content.txt
+
+#scrapping content
 for index in ${!raw_server_list[*]};do
   current_line="${raw_server_list[$index]}"
-  ipv4_list+=$(extract_tag_content "$current_line" "class=mono ipv4")
+  ipv4_list+=($(extract_tag_content "$current_line" "class=mono ipv4"))
   #some tags remain in the scrapped ipv6 list which require a little more work
   tmp_ipv6=$(extract_tag_content "$current_line" "class=mono ipv6")
-  ipv6_list+=$(printf "$tmp_ipv6" | sed -e "s/<wbr>//g")
-  hostname_list+=$(extract_tag_content "$current_line" "a id=")
-  subm_date_list+=$(extract_tag_content "$current_line" "class=crtd")
+  ipv6_list+=($(printf "$tmp_ipv6" | sed -e "s/<wbr>//g"))
+  tmp_hostname=$(extract_tag_content "$current_line" "a id=")
+  hostname_list+=($(printf $tmp_hostname | sed 's/<br><em>.*//g'))
+  subm_date_list+=($(extract_tag_content "$current_line" "class=crtd"))
   #a tag remain in the scrapped owner list which require a little more work
-  tmp_owner=$(extract_tag_content "$current_line" "class=ownr")
-  owner_list+=${tmp_owner:0:${#tmp_owner}-4}
+  tmp_owner="$(extract_tag_content "$current_line" "class=ownr")"
+  owner_list+=("${tmp_owner:0:${#tmp_owner}-4}")
 done
 
 
-for ix in ${!ipv6_list[*]}
+for index in ${!raw_server_list[*]}
 do
-    echo "${ipv6_list[$ix]}\n"
-done
+    printf ${ipv4_list[$index]}"  "${ipv6_list[$index]}"  "${hostname_list[$index]}"  ""${owner_list[$index]}""  ""${subm_date_list[$index]}""\n"
+done | paste - -
 echo
