@@ -22,7 +22,23 @@ function index_substr_from_str () {
 }
 
 function extract_tag_content(){
-  #extract content from html tag converted in a string 
+  #extract content from converted string with an html partial or full tag given in parameters
+  index=$(index_substr_from_str "$1" "$2")
+  if [ "$index" = "-1" ];then
+    echo ""
+    return 0
+  fi
+  first_index=$index
+  while [ "${1:$first_index:1}" != ">" ];do
+    let first_index+=1
+  done
+  last_index=$first_index
+  while [ "${1:$last_index:2}" != "</" ];do
+    let last_index+=1
+  done
+  let first_index+=1
+  echo ${1:$first_index:$last_index-$first_index}
+  return 0
 }
 
 #crawling the website and applying a first filter then store it into a txt file for a better work
@@ -31,18 +47,25 @@ curl -s https://servers.opennic.org | grep "No logs kept" | grep "Pass"   > craw
 while IFS='' read -r line || [[ -n "$line" ]];do
   #removing empty trailing spaces
   filtered_line=$(echo $line | xargs)
-  #removing the Pass word
-  filtered_line=${filtered_line:0:-4}
-  if [[ $filtered_line = '&#'* ]];then
-    #removing the specials caracters when they exist
-     filtered_line=${filtered_line:7}
-  fi
   raw_server_list+=("$filtered_line")
 done < crawled_content.txt
+rm crawled_content.txt
+for index in ${!raw_server_list[*]};do
+  current_line="${raw_server_list[$index]}"
+  ipv4_list+=$(extract_tag_content "$current_line" "class=mono ipv4")
+  #some tags remain in the scrapped ipv6 list which require a little more work
+  tmp_ipv6=$(extract_tag_content "$current_line" "class=mono ipv6")
+  ipv6_list+=$(printf "$tmp_ipv6" | sed -e "s/<wbr>//g")
+  hostname_list+=$(extract_tag_content "$current_line" "a id=")
+  subm_date_list+=$(extract_tag_content "$current_line" "class=crtd")
+  #a tag remain in the scrapped owner list which require a little more work
+  tmp_owner=$(extract_tag_content "$current_line" "class=ownr")
+  owner_list+=${tmp_owner:0:${#tmp_owner}-4}
+done
 
 
-for ix in ${!raw_server_list[*]}
+for ix in ${!ipv6_list[*]}
 do
-    echo "${raw_server_list[$ix]}\n"
+    echo "${ipv6_list[$ix]}\n"
 done
 echo
