@@ -1,6 +1,6 @@
 #!/bin/bash
-printf 'Welcome to the AODNS script, it will fetch the no logs DNS from the Opennic project and install one of them.\n'
 
+###FUNCTION SECTION###
 function index_substr_from_str () {
   #get the last index of the first occurence of a given substring supposed to be in a string
   #first parameter should be the string, second parmater should be the substring to seek
@@ -56,7 +56,9 @@ function get_max_space(){
   printf "$max_lenght"
 }
 
+###MAIN CODE###
 
+printf 'Welcome to the AODNS script, it will fetch the no logs DNS from the Opennic project and install one of them.\n'
 #crawling the website and applying a first filter then store it into a txt file for a better work
 curl -s https://servers.opennic.org | grep "No logs kept" | grep "Pass"   > crawled_content.txt
 #storing each lines of the crawled content into a bash array and removing unwanted elements
