@@ -57,9 +57,14 @@ rm crawled_content.txt
 for index in ${!raw_server_list[*]};do
   current_line="${raw_server_list[$index]}"
   ipv4_list+=($(extract_tag_content "$current_line" "class=mono ipv4"))
-  #some tags remain in the scrapped ipv6 list which require a little more work
-  tmp_ipv6=$(extract_tag_content "$current_line" "class=mono ipv6")
-  ipv6_list+=($(printf "$tmp_ipv6" | sed -e "s/<wbr>//g"))
+  #some tags remain in the scrapped ipv6 list which require a little more work and some ipv6 aren't available so they will be replaced with "NONE"
+  tmp_ipv6=$(printf "$(extract_tag_content "$current_line" "class=mono ipv6")" | sed -e "s/<wbr>//g")
+  if [ "$tmp_ipv6" = "&nbsp;" ];then
+    ipv6_list+=("NONE")
+  else
+    ipv6_list+=($tmp_ipv6)
+  fi
+  #tags remain in the scrapped hostname list which require a little more work
   tmp_hostname=$(extract_tag_content "$current_line" "a id=")
   hostname_list+=($(printf $tmp_hostname | sed 's/<br><em>.*//g'))
   subm_date_list+=($(extract_tag_content "$current_line" "class=crtd"))
@@ -69,8 +74,10 @@ for index in ${!raw_server_list[*]};do
 done
 
 
+
+
 for index in ${!raw_server_list[*]}
 do
     printf ${ipv4_list[$index]}"  "${ipv6_list[$index]}"  "${hostname_list[$index]}"  ""${owner_list[$index]}""  ""${subm_date_list[$index]}""\n"
-done | paste - -
+done
 echo
