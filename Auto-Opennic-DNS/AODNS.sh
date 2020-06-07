@@ -1,5 +1,5 @@
 #!/bin/bash
-printf 'Welcome to the AODNS script, it will fetch the more secured and reliable free DNS from the Opennic project install them.\nDo not hesitate to run this script again if you have network issues, those DNSs can sometimes be capricious\n'
+printf 'Welcome to the AODNS script, it will fetch the no logs DNS from the Opennic project and install one of them.\n'
 
 function index_substr_from_str () {
   #get the last index of the first occurence of a given substring supposed to be in a string
@@ -42,6 +42,20 @@ function extract_tag_content(){
 }
 
 
+function get_max_space(){
+  #take an array in parameters
+  #return the maximum lenghts of each items of the array
+  copy=("$@")
+  max_lenght=0
+  for item in "${copy[@]}";do
+    if [ "${#item}" -gt "$max_lenght" ];then
+      max_lenght=${#item}
+    fi
+  done
+  let max_lenght+=1
+  printf "$max_lenght"
+}
+
 
 #crawling the website and applying a first filter then store it into a txt file for a better work
 curl -s https://servers.opennic.org | grep "No logs kept" | grep "Pass"   > crawled_content.txt
@@ -73,11 +87,31 @@ for index in ${!raw_server_list[*]};do
   owner_list+=("${tmp_owner:0:${#tmp_owner}-4}")
 done
 
+#getting the lenght of each arrays
+lenght_ipv4="$(get_max_space "${ipv4_list[@]}")"
+lenght_ipv6="$(get_max_space "${ipv6_list[@]}")"
+lenght_hostname="$(get_max_space "${hostname_list[@]}")"
+lenght_owner="$(get_max_space "${owner_list[@]}")"
 
-
-
+printf "the following DNS have been scrapped from the Opennic servers.\nIn the following order: ipv4, ipv6, hostname, owner, submission-date\n"
 for index in ${!raw_server_list[*]}
 do
-    printf ${ipv4_list[$index]}"  "${ipv6_list[$index]}"  "${hostname_list[$index]}"  ""${owner_list[$index]}""  ""${subm_date_list[$index]}""\n"
+    printf "${ipv4_list[$index]}   "
+    for i in `seq 0 $(expr $lenght_ipv4 - ${#ipv4_list[$index]})`;do
+      printf " "
+    done
+    printf "${ipv6_list[$index]}   "
+    for i in `seq 0 $(expr $lenght_ipv6 - ${#ipv6_list[$index]})`;do
+      printf " "
+    done
+    printf "${hostname_list[$index]}   "
+    for i in `seq 0 $(expr $lenght_hostname - ${#hostname_list[$index]})`;do
+      printf " "
+    done
+    printf "${owner_list[$index]}   "
+    for i in `seq 0 $(expr $lenght_owner - ${#owner_list[$index]})`;do
+      printf " "
+    done
+    printf "${subm_date_list[$index]}\n"
 done
-echo
+printf "which one would you like to install ? [0-${#raw_server_list[@]}]\n"
