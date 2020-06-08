@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 ###FUNCTION SECTION###
 function index_substr_from_str () {
@@ -56,8 +57,9 @@ function get_max_space(){
   printf "$max_lenght"
 }
 
-###MAIN CODE###
+#####MAIN CODE#####
 
+##SCRAPPING AND PARSING PART##
 printf 'Welcome to the AODNS script, it will fetch the no logs DNS from the Opennic project and install one of them.\n'
 #crawling the website and applying a first filter then store it into a txt file for a better work
 curl -s https://servers.opennic.org | grep "No logs kept" | grep "Pass"   > crawled_content.txt
@@ -89,6 +91,10 @@ for index in ${!raw_server_list[*]};do
   owner_list+=("${tmp_owner:0:${#tmp_owner}-4}")
 done
 
+
+##PRINTING THE DNS TO THE USERS##
+
+
 #getting the lenght of each arrays
 lenght_ipv4="$(get_max_space "${ipv4_list[@]}")"
 lenght_ipv6="$(get_max_space "${ipv6_list[@]}")"
@@ -116,4 +122,10 @@ do
     done
     printf "${subm_date_list[$index]}\n"
 done
-printf "which one would you like to install ? [0-${#raw_server_list[@]}]\n"
+printf "which one would you like to install ? [0-${#raw_server_list[@]}]"
+read dns_number
+printf "getting your first current device used to be connected to internet\n"
+current_device="$(nmcli device | grep "wifi      connected " | head -n1 |cut -d " " -f1)"
+printf "setting the DNS to the device...\n"
+nmcli con mod $current_device ipv4.dns "${ipv4_list[$dns_number-1]}"
+printf "done !\n"
