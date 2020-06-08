@@ -9,7 +9,7 @@ set -e
 ######GUIDED INPUT MODE#######
 read -p 'How many scans will you do: ' scan_number
 read -p 'Set the delay (in seconds) needed to switch between scans: ' delay
-read -e -p 'Set the absolute path folder (without aliases) where you want to save your files: ' path_file
+read -e -r -p 'Set the absolute path folder (without aliases) where you want to save your files: ' path_file
 echo $path_file
 if [ ! -d $path_file ]; then
   read -p 'this directory does not exist, do you want to create it ? (y for yes, n for no): ' create_dir
@@ -34,13 +34,17 @@ if [ $scan_number = '0' ];then
   printf 'no scan needed, quit'
   exit
 fi
-if [ $output_format != 'pdf' ] && [ $output_format != 'pdfu' ];then
+if [ $output_format != 'pdf' ] && [ $output_format != 'pdfu' ] && [ $output_format != 'png' ];then
   printf 'unknow format, switching to default png format\n'
   output_format='png'
 fi
-if [ $scan_number = '1' ] && [ $output_format = 'pdfu' ];then
-  printf 'only 1 scan programmed, no pdfu format needed, switching to pdf format\n'
-  output_format='pdf'
+if [ $scan_number = '1' ];then
+  printf "no awaiting time needed, setting it to  0\n"
+  delay="0"
+   if [ $output_format = 'pdfu' ];then
+     printf 'only 1 scan programmed, no pdfu format needed, switching to pdf format\n'
+     output_format='pdf'
+   fi
 fi
 
 #######MAIN PART#########
@@ -51,9 +55,10 @@ for i in `seq 1 $scan_number`; do
     sleep 1
     printf '\r'
   done
-    printf '\n'
-    scanimage --mode Color --format png -p >hp$i.png
-    printf '\r\r'
+  printf '\n'
+  file=$( printf "hp${i}.png")
+  scanimage --mode Color --format png -p > $file
+  printf '\r\r'
 done
 printf '\n'
 if [ $output_format = 'pdfu' ];then
