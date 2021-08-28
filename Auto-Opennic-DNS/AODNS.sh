@@ -129,7 +129,7 @@ done
 printf "which one would you like to install ? [0-$(expr ${#raw_server_list[@]} - 1)]"
 read dns_number
 printf "getting your first current device used to be connected to internet\n"
-current_device="$(nmcli device | grep "wifi      connected " | head -n1 |cut -d " " -f1)"
+current_device="$(nmcli connection show --active | tail -n1  | awk 'NF{ print $NF }')"
 printf "setting the DNS to the device...\n"
 nmcli con mod $current_device ipv4.dns "${ipv4_list[$dns_number]}"
 printf "done !\n"
