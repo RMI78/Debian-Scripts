@@ -62,7 +62,7 @@ function get_max_space(){
 ##SCRAPPING AND PARSING PART##
 printf 'Welcome to the AODNS script, it will fetch the no logs DNS from the Opennic project and install one of them.\n'
 #crawling the website and applying a first filter then store it into a txt file for a better work
-curl -s https://servers.opennic.org | grep "No logs kept" | grep "Pass"   > crawled_content.txt
+curl -k -s https://servers.opennic.org | grep "No logs kept" | grep "Pass" > crawled_content.txt
 #storing each lines of the crawled content into a bash array and removing unwanted elements
 while IFS='' read -r line || [[ -n "$line" ]];do
   #removing empty trailing spaces
@@ -104,6 +104,10 @@ lenght_owner="$(get_max_space "${owner_list[@]}")"
 printf "the following DNS have been scrapped from the Opennic servers.\nIn the following order: ipv4, ipv6, hostname, owner, submission-date\n"
 for index in ${!raw_server_list[*]}
 do
+    printf "$index   " 
+    for i in `seq 0 $(expr 3 - ${#index})`;do
+      printf " "
+    done
     printf "${ipv4_list[$index]}   "
     for i in `seq 0 $(expr $lenght_ipv4 - ${#ipv4_list[$index]})`;do
       printf " "
@@ -122,10 +126,10 @@ do
     done
     printf "${subm_date_list[$index]}\n"
 done
-printf "which one would you like to install ? [0-${#raw_server_list[@]}]"
+printf "which one would you like to install ? [0-$(expr ${#raw_server_list[@]} - 1)]"
 read dns_number
 printf "getting your first current device used to be connected to internet\n"
 current_device="$(nmcli device | grep "wifi      connected " | head -n1 |cut -d " " -f1)"
 printf "setting the DNS to the device...\n"
-nmcli con mod $current_device ipv4.dns "${ipv4_list[$dns_number-1]}"
+nmcli con mod $current_device ipv4.dns "${ipv4_list[$dns_number]}"
 printf "done !\n"
