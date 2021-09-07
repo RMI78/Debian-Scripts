@@ -59,6 +59,16 @@ function get_max_space(){
 
 #####MAIN CODE#####
 
+current_device="$(nmcli connection show --active | tail -n1  | awk 'NF{ print $1;}')"
+
+##CHECKING INTERNET CONNECTION##
+nmcli con mod $current_device ipv4.ignore-auto-dns yes
+ping servers.oopennic.org -c 1 > /dev/null
+if [ $? -gt 0 ];then
+  printf 'You seem to have issues with your DNS or your internet connection, make sure you are connected, configuring your temporary DNS on 1.1.1.1 ...\n'
+  nmcli con mod $current_device ipv4.dns 1.1.1.1
+fi
+
 ##SCRAPPING AND PARSING PART##
 printf 'Welcome to the AODNS script, it will fetch the no logs DNS from the Opennic project and install one of them.\n'
 #crawling the website and applying a first filter then store it into a txt file for a better work
@@ -104,7 +114,7 @@ lenght_owner="$(get_max_space "${owner_list[@]}")"
 printf "the following DNS have been scrapped from the Opennic servers.\nIn the following order: ipv4, ipv6, hostname, owner, submission-date\n"
 for index in ${!raw_server_list[*]}
 do
-    printf "$index   " 
+    printf "$index   "
     for i in `seq 0 $(expr 3 - ${#index})`;do
       printf " "
     done
@@ -129,7 +139,6 @@ done
 printf "which one would you like to install ? [0-$(expr ${#raw_server_list[@]} - 1)]"
 read dns_number
 printf "getting your first current device used to be connected to internet\n"
-current_device="$(nmcli connection show --active | tail -n1  | awk 'NF{ print $NF }')"
 printf "setting the DNS to the device...\n"
 nmcli con mod $current_device ipv4.dns "${ipv4_list[$dns_number]}"
 printf "done !\n"
